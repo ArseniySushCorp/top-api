@@ -11,13 +11,14 @@ import {
   Post,
 } from '@nestjs/common';
 import { ReviewModel } from './review.model';
-import { ModelType, DocumentType } from '@typegoose/typegoose/lib/types';
+import { DocumentType } from '@typegoose/typegoose/lib/types';
+import { REVIEW_NOT_FOUND } from './review.const';
 
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
-  @Post()
+  @Post('create')
   async create(
     @Body() dto: CreateReviewDto,
   ): Promise<DocumentType<ReviewModel>> {
@@ -29,17 +30,14 @@ export class ReviewController {
     const deletedDoc = await this.reviewService.delete(id);
 
     if (!deletedDoc) {
-      throw new HttpException(
-        'Review with this id not found',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(REVIEW_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
     return deletedDoc;
   }
 
   @Get('byProduct/:productId')
-  async getByProduct(@Param('id') productId: string) {
+  async getByProduct(@Param('productId') productId: string) {
     return this.reviewService.findByProductId(productId);
   }
 }
