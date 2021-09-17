@@ -9,6 +9,8 @@ import {
   HttpStatus,
   Param,
   Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ReviewModel } from './review.model';
 import { DocumentType } from '@typegoose/typegoose/lib/types';
@@ -19,6 +21,7 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post('create')
+  @UsePipes(new ValidationPipe())
   async create(
     @Body() dto: CreateReviewDto,
   ): Promise<DocumentType<ReviewModel>> {
