@@ -14,7 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async createUser(dto: AuthDto) {
+  async createUser(dto: AuthDto): Promise<UserModel> {
     const salt = await genSalt(10);
 
     const newUser = new this.userModel({
