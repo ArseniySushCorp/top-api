@@ -1,4 +1,4 @@
-import { prop } from '@typegoose/typegoose';
+import { modelOptions, prop, Severity } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
 export class ProductCharacteristic {
@@ -10,6 +10,8 @@ export class ProductCharacteristic {
 }
 
 export interface ProductModel extends Base {}
+
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class ProductModel extends TimeStamps {
   @prop()
   image: string;
@@ -44,6 +46,6 @@ export class ProductModel extends TimeStamps {
   @prop({ type: () => [String] })
   tags: string[];
 
-  @prop({ type: () => [ProductCharacteristic], _id: false })
-  characteristics: ProductCharacteristic;
+  @prop({ _id: false })
+  characteristics: ProductCharacteristic[];
 }
