@@ -4,12 +4,13 @@ import {
   Controller,
   HttpCode,
   Post,
-  UploadedFiles,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUnitResponse } from './dto/file-response-unit.dto';
+import { MFile } from './dto/mfile.class';
 
 @Controller('files')
 export class FilesController {
@@ -19,7 +20,17 @@ export class FilesController {
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('files'))
-  async uploadFile(@UploadedFiles() files: Express.Multer.File[]): Promise<FileUnitResponse[]> {
-    return this.service.saveFiles(files);
+  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<FileUnitResponse[]> {
+    const saveArray: MFile[] = [file];
+
+    if (file.mimetype.includes('image')) {
+      const webP = await this.service.convertToWebP(file.buffer);
+
+      saveArray.push(
+        new MFile({ originalname: `${file.originalname.split(',')[0]}.webp`, buffer: webP }),
+      );
+    }
+
+    return this.service.saveFiles(saveArray);
   }
 }
