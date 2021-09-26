@@ -47,7 +47,7 @@ export class TopPageModel extends TimeStamps {
   @prop({ unique: true })
   alias: string;
 
-  @prop()
+  @prop({ text: true })
   title: string;
 
   @prop()

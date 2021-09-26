@@ -21,12 +21,6 @@ import { PAGE_NOT_FOUND_ERROR } from './top-page.const';
 export class TopPageController {
   constructor(private readonly service: TopPageService) {}
 
-  @UsePipes(new ValidationPipe())
-  @Post('create')
-  async create(@Body() dto: CreateTopPageDto) {
-    return this.service.create(dto);
-  }
-
   @Get(':id')
   async get(@Param('id', IdValidationPipe) id: string) {
     const page = await this.service.findById(id);
@@ -36,6 +30,18 @@ export class TopPageController {
     }
 
     return page;
+  }
+
+  @Get('textSearch/:text')
+  async textSearch(@Param('text') text: string) {
+    return this.service.findByText(text);
+  }
+
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('find')
+  async findByFirstCategory(@Body() { firstCategory }: FindTopPageDto) {
+    return this.service.findByFirstCategory(firstCategory);
   }
 
   @Get('byAlias/:alias')
@@ -49,15 +55,10 @@ export class TopPageController {
     return page;
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    const deletedPage = await this.service.deleteById(id);
-
-    if (!deletedPage) {
-      throw new NotFoundException(PAGE_NOT_FOUND_ERROR);
-    }
-
-    return deletedPage;
+  @UsePipes(new ValidationPipe())
+  @Post('create')
+  async create(@Body() dto: CreateTopPageDto) {
+    return this.service.create(dto);
   }
 
   @UsePipes(new ValidationPipe())
@@ -72,10 +73,14 @@ export class TopPageController {
     return updatedPage;
   }
 
-  @UsePipes(new ValidationPipe())
-  @HttpCode(200)
-  @Post('find')
-  async findByFirstCategory(@Body() { firstCategory }: FindTopPageDto) {
-    return this.service.findByFirstCategory(firstCategory);
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    const deletedPage = await this.service.deleteById(id);
+
+    if (!deletedPage) {
+      throw new NotFoundException(PAGE_NOT_FOUND_ERROR);
+    }
+
+    return deletedPage;
   }
 }
