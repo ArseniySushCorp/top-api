@@ -10,7 +10,6 @@ import {
   HttpStatus,
   Param,
   Post,
-  Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
