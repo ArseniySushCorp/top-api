@@ -19,7 +19,7 @@ export class FilesController {
   @Post('upload')
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('files'))
+  @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<FileUnitResponse[]> {
     const saveArray: MFile[] = [file];
 
