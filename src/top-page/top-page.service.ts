@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types';
 import { addDays } from 'date-fns';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class TopPageService {
@@ -28,7 +29,7 @@ export class TopPageService {
     return this.pageModel.findByIdAndDelete(id).exec();
   }
 
-  async updateById(id: string, dto: CreateTopPageDto): Promise<TopPageModel> {
+  async updateById(id: string | Types.ObjectId, dto: CreateTopPageDto): Promise<TopPageModel> {
     return this.pageModel.findByIdAndUpdate(id, dto, { new: true }).exec();
   }
 
@@ -56,7 +57,13 @@ export class TopPageService {
 
   async findForHhUpdate(date: Date) {
     return this.pageModel
-      .find({ firstCategory: TopLevelCategory.Courses, 'hh.updatedAt': { $lt: addDays(date, -1) } })
+      .find({
+        firstCategory: TopLevelCategory.Courses,
+        $or: [
+          { 'hh.updatedAt': { $lt: addDays(date, -1) } },
+          { 'hh.updatedAt': { $exists: false } },
+        ],
+      })
       .exec();
   }
 }
